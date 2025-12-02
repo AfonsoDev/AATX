@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-aatx
+    environment:
+      MYSQL_ROOT_PASSWORD: minha_senha_root
+      MYSQL_DATABASE: meu_banco
+      MYSQL_USER: usuario_app
+      MYSQL_PASSWORD: senha_usuario
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
