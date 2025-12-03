@@ -56,13 +56,13 @@ Este repositório funciona como um ambiente real de experimentação.
 ---
 
 ## 📁 Estrutura do Projeto
-/backend
-├── src/
-│ ├── controllers/
-│ ├── services/
-│ ├── encryption/
-│ └── socket/
-└── index.js
+- /backend
+- ├── src/
+- │ ├── controllers/
+- │ ├── services/
+- │ ├── encryption/
+- │ └── socket/
+- └── index.js
 
 /app
 ├── components/
