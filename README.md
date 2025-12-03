@@ -56,3 +56,35 @@ Este repositório funciona como um ambiente real de experimentação.
 ---
 
 ## 📁 Estrutura do Projeto
+/backend
+├── src/
+│ ├── controllers/
+│ ├── services/
+│ ├── encryption/
+│ └── socket/
+└── index.js
+
+/app
+├── components/
+├── screens/
+├── hooks/
+├── UserContext.js
+└── app/
+
+
+---
+
+## 📦 Como Rodar o Projeto
+
+### 🔌 Backend
+
+```bash
+cd backend
+npm install
+npm start
+
+
+📱 Aplicativo (React Native + Expo)
+cd app
+npm install
+npx expo start
