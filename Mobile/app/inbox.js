@@ -3,14 +3,13 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
-  Button,
   StyleSheet,
   FlatList,
   TouchableOpacity,
   Alert,
   ActivityIndicator,
   RefreshControl,
-  TextInput,
+  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors } from "./styles/Colors";
@@ -18,8 +17,12 @@ import { useUser } from "./UserContext";
 import axios from "axios";
 import { API_URL } from "./config";
 import { socket } from "./socket";
-
 import * as Clipboard from 'expo-clipboard';
+
+import FuturisticBackground from "../components/FuturisticBackground";
+import GlassInput from "../components/GlassInput";
+import NeonButton from "../components/NeonButton";
+import GlassCard from "../components/GlassCard";
 
 export default function InboxScreen() {
   const router = useRouter();
@@ -108,129 +111,211 @@ export default function InboxScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
-        <ActivityIndicator size="large" color={Colors.accent} />
-      </View>
+      <FuturisticBackground style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </FuturisticBackground>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <FuturisticBackground style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.title}>Inbox - {user?.name}</Text>
+          <Text style={styles.title}>INBOX</Text>
           <TouchableOpacity onPress={copyToClipboard}>
-            <Text style={styles.subtitle}>Toque para copiar seu UUID</Text>
+            <Text style={styles.subtitle}>
+              {user?.name} <Text style={styles.uuidHint}>(Copiar UUID)</Text>
+            </Text>
           </TouchableOpacity>
         </View>
-        <Button title="Sair" color={Colors.accent} onPress={() => {
+        <TouchableOpacity onPress={() => {
           logout();
           router.replace("/login");
-        }} />
+        }} style={styles.logoutButton}>
+          <Text style={styles.logoutText}>SAIR</Text>
+        </TouchableOpacity>
       </View>
 
       {showNewChat ? (
-        <View style={styles.newChatContainer}>
-          <TextInput
-            placeholder="UUID do outro usuário"
-            placeholderTextColor="#888"
-            style={styles.input}
+        <GlassCard style={styles.newChatContainer}>
+          <Text style={styles.sectionTitle}>NOVO CHAT</Text>
+          <GlassInput
+            placeholder="UUID do usuário"
             value={otherUserUuid}
             onChangeText={setOtherUserUuid}
             autoCapitalize="none"
           />
           <View style={styles.buttonRow}>
-            <Button title="Criar Chat" color={Colors.accent} onPress={createNewChat} />
-            <Button title="Cancelar" color="#666" onPress={() => {
-              setShowNewChat(false);
-              setOtherUserUuid("");
-            }} />
+            <NeonButton
+              title="CRIAR"
+              onPress={createNewChat}
+              style={{ flex: 1, marginRight: 10 }}
+            />
+            <NeonButton
+              title="CANCELAR"
+              secondary
+              onPress={() => {
+                setShowNewChat(false);
+                setOtherUserUuid("");
+              }}
+              style={{ flex: 1, marginLeft: 10 }}
+            />
           </View>
-        </View>
+        </GlassCard>
       ) : (
-        <Button title="+ Novo Chat" color={Colors.secondary} onPress={() => setShowNewChat(true)} />
+        <NeonButton
+          title="+ NOVO CHAT"
+          secondary
+          onPress={() => setShowNewChat(true)}
+          style={styles.newChatButton}
+        />
       )}
 
       {chats.length === 0 ? (
-        <Text style={styles.emptyText}>Nenhum chat ainda. Crie um novo chat!</Text>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Nenhuma mensagem detectada.</Text>
+          <Text style={styles.emptySubText}>Inicie uma nova conexão.</Text>
+        </View>
       ) : (
         <FlatList
           data={chats}
           keyExtractor={(item) => item.chat_id}
+          contentContainerStyle={styles.listContent}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.accent} />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />
           }
           renderItem={({ item }) => (
-            <TouchableOpacity
+            <GlassCard
               onPress={() =>
                 router.push(`/chat/${item.chat_id}?otherUserUuid=${getChatPartnerUuid(item)}`)
               }
-              style={styles.item}
             >
-              <Text style={styles.itemText}>{getChatPartnerName(item)}</Text>
-              <Text style={styles.itemUuid}>{getChatPartnerUuid(item)}</Text>
-              {item.last_message && (
-                <Text style={styles.lastMessage} numberOfLines={1}>
-                  {item.last_message}
-                </Text>
-              )}
-            </TouchableOpacity>
+              <View style={styles.chatRow}>
+                <View style={styles.avatarPlaceholder}>
+                  <Text style={styles.avatarText}>
+                    {getChatPartnerName(item).charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+                <View style={styles.chatInfo}>
+                  <Text style={styles.itemText}>{getChatPartnerName(item)}</Text>
+                  {item.last_message && (
+                    <Text style={styles.lastMessage} numberOfLines={1}>
+                      {item.last_message}
+                    </Text>
+                  )}
+                </View>
+              </View>
+            </GlassCard>
           )}
         />
       )}
-    </View>
+    </FuturisticBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background, padding: 20 },
+  container: { flex: 1, padding: 20 },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 30,
+    marginTop: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 32,
     color: Colors.primary,
+    fontWeight: 'bold',
+    letterSpacing: 2,
+    textShadowColor: Colors.primary,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 10,
   },
   subtitle: {
+    fontSize: 14,
+    color: Colors.text,
+    marginTop: 5,
+    fontWeight: '600',
+  },
+  uuidHint: {
+    color: Colors.textDim,
     fontSize: 12,
-    color: "#888",
-    marginTop: 2,
+  },
+  logoutButton: {
+    padding: 10,
+  },
+  logoutText: {
+    color: Colors.error,
+    fontWeight: 'bold',
+    letterSpacing: 1,
   },
   newChatContainer: {
     marginBottom: 20,
-    padding: 15,
-    backgroundColor: "#111",
-    borderRadius: 8,
   },
-  input: {
-    backgroundColor: "#222",
+  sectionTitle: {
     color: Colors.text,
-    marginBottom: 10,
-    padding: 10,
-    borderRadius: 8,
-    borderColor: Colors.primary,
-    borderWidth: 1,
+    fontSize: 18,
+    marginBottom: 15,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   buttonRow: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
   },
-  item: {
-    padding: 15,
-    marginBottom: 10,
-    backgroundColor: "#111",
-    borderRadius: 8,
+  newChatButton: {
+    marginBottom: 20,
   },
-  itemText: { color: Colors.secondary, fontSize: 18, marginBottom: 5 },
-  itemUuid: { color: "#888", fontSize: 12 },
-  lastMessage: { color: "#aaa", fontSize: 14, marginTop: 5, fontStyle: "italic" },
+  listContent: {
+    paddingBottom: 20,
+  },
+  chatRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatarPlaceholder: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+  },
+  avatarText: {
+    color: Colors.primary,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  chatInfo: {
+    flex: 1,
+  },
+  itemText: {
+    color: Colors.text,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4
+  },
+  lastMessage: {
+    color: Colors.textDim,
+    fontSize: 14,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: 0.7,
+  },
   emptyText: {
-    color: "#888",
-    textAlign: "center",
-    marginTop: 50,
-    fontSize: 16,
+    color: Colors.text,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  emptySubText: {
+    color: Colors.textDim,
+    fontSize: 14,
   },
 });

@@ -8,8 +8,9 @@ export default function Layout() {
       <Stack
         initialRouteName="login"
         screenOptions={{
-          headerStyle: { backgroundColor: "#0a0a0f" },
-          headerTintColor: "#ff00ff",
+          headerShown: false,
+          contentStyle: { backgroundColor: 'transparent' }, // Important for the background to show through if needed
+          animation: 'fade', // Smoother transitions for futuristic feel
         }}
       />
     </UserProvider>

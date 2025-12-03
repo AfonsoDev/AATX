@@ -1,11 +1,14 @@
 // login.js
 import React, { useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Alert, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors } from "./styles/Colors";
 import { useUser } from "./UserContext";
 import axios from "axios";
 import { API_URL } from "./config";
+import FuturisticBackground from "../components/FuturisticBackground";
+import GlassInput from "../components/GlassInput";
+import NeonButton from "../components/NeonButton";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -44,63 +47,84 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        placeholder="UUID"
-        placeholderTextColor="#888"
-        style={styles.input}
-        value={uuid}
-        onChangeText={setUUID}
-        autoCapitalize="none"
-        editable={!loading}
-      />
-      <TextInput
-        placeholder="Senha"
-        placeholderTextColor="#888"
-        style={styles.input}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        editable={!loading}
-      />
-      {loading ? (
-        <ActivityIndicator size="large" color={Colors.accent} />
-      ) : (
-        <Button title="Login" color={Colors.accent} onPress={handleLogin} />
-      )}
-      <Text style={styles.link} onPress={() => router.push("/register")}>
-        Não tem uma conta? Registre-se
-      </Text>
-    </View>
+    <FuturisticBackground style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.title}>AATX</Text>
+        <Text style={styles.subtitle}>FUTURE MESSAGING</Text>
+
+        <View style={styles.form}>
+          <GlassInput
+            placeholder="UUID"
+            value={uuid}
+            onChangeText={setUUID}
+            autoCapitalize="none"
+            editable={!loading}
+          />
+          <GlassInput
+            placeholder="Senha"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+            editable={!loading}
+          />
+
+          <NeonButton
+            title="ENTRAR"
+            onPress={handleLogin}
+            loading={loading}
+            style={styles.button}
+          />
+
+          <Text style={styles.link} onPress={() => router.push("/register")}>
+            Não tem uma conta? <Text style={styles.linkHighlight}>Registre-se</Text>
+          </Text>
+        </View>
+      </View>
+    </FuturisticBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: Colors.background,
     justifyContent: "center",
     padding: 20,
   },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   title: {
     color: Colors.primary,
-    fontSize: 28,
-    marginBottom: 20,
+    fontSize: 48,
+    fontWeight: 'bold',
     textAlign: "center",
+    letterSpacing: 4,
+    textShadowColor: Colors.primary,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 20,
   },
-  input: {
-    backgroundColor: "#111",
-    color: Colors.text,
-    marginBottom: 15,
-    padding: 10,
-    borderRadius: 8,
-    borderColor: Colors.primary,
-    borderWidth: 1,
+  subtitle: {
+    color: Colors.secondary,
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 50,
+    letterSpacing: 2,
+    fontWeight: '600',
+  },
+  form: {
+    width: '100%',
+  },
+  button: {
+    marginTop: 10,
   },
   link: {
-    color: Colors.secondary,
-    marginTop: 15,
+    color: Colors.textDim,
+    marginTop: 25,
     textAlign: "center",
+    fontSize: 14,
+  },
+  linkHighlight: {
+    color: Colors.primary,
+    fontWeight: 'bold',
   },
 });

@@ -1,14 +1,16 @@
 // app/chat/[uuid].js
 import React, { useState, useEffect, useCallback } from "react";
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import { GiftedChat, Bubble, InputToolbar, Send, Composer } from "react-native-gifted-chat";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { socket } from "./../socket";
 import { useUser } from "./../UserContext";
 import axios from "axios";
 import { API_URL } from "./../config";
-import { View, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
+import { View, ActivityIndicator, KeyboardAvoidingView, Platform, Text, StyleSheet } from "react-native";
 import { Colors } from "./../styles/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
+import FuturisticBackground from "../../components/FuturisticBackground";
+import { BlurView } from "expo-blur";
 
 export default function ChatScreen() {
   const [messages, setMessages] = useState([]);
@@ -105,60 +107,146 @@ export default function ChatScreen() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: Colors.background }}>
-        <ActivityIndicator size="large" color={Colors.accent} />
-      </View>
+      <FuturisticBackground style={{ justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </FuturisticBackground>
     );
   }
 
+  const renderInputToolbar = (props) => (
+    <InputToolbar
+      {...props}
+      containerStyle={{
+        backgroundColor: 'transparent',
+        borderTopWidth: 0,
+        padding: 5,
+      }}
+      primaryStyle={{ alignItems: 'center' }}
+    />
+  );
+
+  const renderComposer = (props) => (
+    <BlurView intensity={20} tint="dark" style={styles.composerBlur}>
+      <Composer
+        {...props}
+        textInputStyle={{
+          color: Colors.text,
+          backgroundColor: 'transparent',
+          paddingHorizontal: 10,
+        }}
+        placeholderTextColor={Colors.textDim}
+      />
+    </BlurView>
+  );
+
+  const renderSend = (props) => (
+    <Send {...props}>
+      <View style={styles.sendButton}>
+        <Text style={styles.sendText}>SEND</Text>
+      </View>
+    </Send>
+  );
+
+  const renderBubble = (props) => (
+    <Bubble
+      {...props}
+      wrapperStyle={{
+        right: {
+          backgroundColor: Colors.accent,
+          borderWidth: 1,
+          borderColor: Colors.primary,
+          shadowColor: Colors.primary,
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.5,
+          shadowRadius: 5,
+        },
+        left: {
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          borderWidth: 1,
+          borderColor: 'rgba(255, 255, 255, 0.2)',
+        },
+      }}
+      textStyle={{
+        right: {
+          color: Colors.text,
+        },
+        left: {
+          color: Colors.text,
+        },
+      }}
+    />
+  );
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }} edges={['bottom']}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-      >
-        <GiftedChat
-          messages={messages}
-          onSend={onSend}
-          user={loggedUser}
-          showUserAvatar
-          renderUsernameOnMessage
-          alwaysShowSend
-          renderAvatar={null}
-          bottomOffset={Platform.OS === 'ios' ? 0 : 20}
-          minInputToolbarHeight={60}
-          textInputStyle={{
-            backgroundColor: '#111',
-            color: Colors.text,
-            borderRadius: 20,
-            paddingHorizontal: 15,
-            paddingTop: 10,
-            paddingBottom: 10,
-          }}
-          renderBubble={(props) => (
-            <Bubble
-              {...props}
-              wrapperStyle={{
-                right: {
-                  backgroundColor: Colors.accent,
-                },
-                left: {
-                  backgroundColor: '#333',
-                },
-              }}
-              textStyle={{
-                right: {
-                  color: Colors.text,
-                },
-                left: {
-                  color: Colors.text,
-                },
-              }}
-            />
-          )}
-        />
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    <FuturisticBackground>
+      <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'top']}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>CHAT</Text>
+          <Text style={styles.headerSubtitle}>{otherUserUuid}</Text>
+        </View>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        >
+          <GiftedChat
+            messages={messages}
+            onSend={onSend}
+            user={loggedUser}
+            showUserAvatar
+            renderUsernameOnMessage
+            alwaysShowSend
+            renderAvatar={null}
+            renderInputToolbar={renderInputToolbar}
+            renderComposer={renderComposer}
+            renderSend={renderSend}
+            renderBubble={renderBubble}
+            bottomOffset={Platform.OS === 'ios' ? 0 : 0}
+            minInputToolbarHeight={60}
+          />
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </FuturisticBackground>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.glassBorder,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    color: Colors.primary,
+    fontSize: 18,
+    fontWeight: 'bold',
+    letterSpacing: 2,
+  },
+  headerSubtitle: {
+    color: Colors.textDim,
+    fontSize: 10,
+  },
+  composerBlur: {
+    flex: 1,
+    borderRadius: 20,
+    overflow: 'hidden',
+    marginRight: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderWidth: 1,
+    borderColor: Colors.glassBorder,
+  },
+  sendButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 44,
+    paddingHorizontal: 15,
+    marginRight: 5,
+  },
+  sendText: {
+    color: Colors.primary,
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+});

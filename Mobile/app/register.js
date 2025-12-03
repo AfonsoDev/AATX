@@ -1,11 +1,14 @@
 // app/register.js
 import React, { useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors } from "./styles/Colors";
 import { useUser } from "./UserContext";
 import axios from "axios";
 import { API_URL } from "./config";
+import FuturisticBackground from "../components/FuturisticBackground";
+import GlassInput from "../components/GlassInput";
+import NeonButton from "../components/NeonButton";
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -50,71 +53,90 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
-      <TextInput
-        placeholder="Nome"
-        placeholderTextColor="#888"
-        style={styles.input}
-        value={name}
-        onChangeText={setName}
-        editable={!loading}
-      />
-      <TextInput
-        placeholder="Telefone"
-        placeholderTextColor="#888"
-        style={styles.input}
-        value={phone}
-        onChangeText={setPhone}
-        keyboardType="phone-pad"
-        editable={!loading}
-      />
-      <TextInput
-        placeholder="Senha"
-        placeholderTextColor="#888"
-        style={styles.input}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        editable={!loading}
-      />
-      {loading ? (
-        <ActivityIndicator size="large" color={Colors.accent} />
-      ) : (
-        <Button title="Register" color={Colors.accent} onPress={handleRegister} />
-      )}
-      <Text style={styles.link} onPress={() => router.push("/login")}>
-        Já tem uma conta? Faça login
-      </Text>
-    </View>
+    <FuturisticBackground style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.title}>NOVA CONTA</Text>
+        <Text style={styles.subtitle}>JUNTE-SE AO FUTURO</Text>
+
+        <View style={styles.form}>
+          <GlassInput
+            placeholder="Nome"
+            value={name}
+            onChangeText={setName}
+            editable={!loading}
+          />
+          <GlassInput
+            placeholder="Telefone"
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
+            editable={!loading}
+          />
+          <GlassInput
+            placeholder="Senha"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+            editable={!loading}
+          />
+
+          <NeonButton
+            title="REGISTRAR"
+            onPress={handleRegister}
+            loading={loading}
+            style={styles.button}
+          />
+
+          <Text style={styles.link} onPress={() => router.push("/login")}>
+            Já tem uma conta? <Text style={styles.linkHighlight}>Faça login</Text>
+          </Text>
+        </View>
+      </View>
+    </FuturisticBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: Colors.background,
     justifyContent: "center",
     padding: 20,
   },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   title: {
     color: Colors.primary,
-    fontSize: 28,
-    marginBottom: 20,
+    fontSize: 36,
+    fontWeight: 'bold',
     textAlign: "center",
+    letterSpacing: 2,
+    textShadowColor: Colors.primary,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 15,
   },
-  input: {
-    backgroundColor: "#111",
-    color: Colors.text,
-    marginBottom: 15,
-    padding: 10,
-    borderRadius: 8,
-    borderColor: Colors.primary,
-    borderWidth: 1,
+  subtitle: {
+    color: Colors.secondary,
+    fontSize: 12,
+    textAlign: "center",
+    marginBottom: 40,
+    letterSpacing: 2,
+    fontWeight: '600',
+  },
+  form: {
+    width: '100%',
+  },
+  button: {
+    marginTop: 10,
   },
   link: {
-    color: Colors.secondary,
-    marginTop: 15,
+    color: Colors.textDim,
+    marginTop: 25,
     textAlign: "center",
+    fontSize: 14,
+  },
+  linkHighlight: {
+    color: Colors.primary,
+    fontWeight: 'bold',
   },
 });
