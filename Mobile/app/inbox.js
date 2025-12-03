@@ -17,7 +17,7 @@ import { useUser } from "./UserContext";
 import axios from "axios";
 import { API_URL } from "./config";
 import { socket } from "./socket";
-import * as Clipboard from 'expo-clipboard';
+import * as Clipboard from "expo-clipboard";
 
 import FuturisticBackground from "../components/FuturisticBackground";
 import GlassInput from "../components/GlassInput";
@@ -71,7 +71,10 @@ export default function InboxScreen() {
 
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(user.uuid);
-    Alert.alert("Sucesso", "Seu UUID foi copiado para a área de transferência!");
+    Alert.alert(
+      "Sucesso",
+      "Seu UUID foi copiado para a área de transferência!",
+    );
   };
 
   const createNewChat = async () => {
@@ -111,7 +114,12 @@ export default function InboxScreen() {
 
   if (loading) {
     return (
-      <FuturisticBackground style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <FuturisticBackground
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
         <ActivityIndicator size="large" color={Colors.primary} />
       </FuturisticBackground>
     );
@@ -128,10 +136,13 @@ export default function InboxScreen() {
             </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => {
-          logout();
-          router.replace("/login");
-        }} style={styles.logoutButton}>
+        <TouchableOpacity
+          onPress={() => {
+            logout();
+            router.replace("/login");
+          }}
+          style={styles.logoutButton}
+        >
           <Text style={styles.logoutText}>SAIR</Text>
         </TouchableOpacity>
       </View>
@@ -182,12 +193,18 @@ export default function InboxScreen() {
           keyExtractor={(item) => item.chat_id}
           contentContainerStyle={styles.listContent}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={Colors.primary}
+            />
           }
           renderItem={({ item }) => (
             <GlassCard
               onPress={() =>
-                router.push(`/chat/${item.chat_id}?otherUserUuid=${getChatPartnerUuid(item)}`)
+                router.push(
+                  `/chat/${item.chat_id}?otherUserUuid=${getChatPartnerUuid(item)}`,
+                )
               }
             >
               <View style={styles.chatRow}>
@@ -197,7 +214,9 @@ export default function InboxScreen() {
                   </Text>
                 </View>
                 <View style={styles.chatInfo}>
-                  <Text style={styles.itemText}>{getChatPartnerName(item)}</Text>
+                  <Text style={styles.itemText}>
+                    {getChatPartnerName(item)}
+                  </Text>
                   {item.last_message && (
                     <Text style={styles.lastMessage} numberOfLines={1}>
                       {item.last_message}
@@ -225,7 +244,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     color: Colors.primary,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     letterSpacing: 2,
     textShadowColor: Colors.primary,
     textShadowOffset: { width: 0, height: 0 },
@@ -235,7 +254,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.text,
     marginTop: 5,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   uuidHint: {
     color: Colors.textDim,
@@ -246,7 +265,7 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     color: Colors.error,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     letterSpacing: 1,
   },
   newChatContainer: {
@@ -256,8 +275,8 @@ const styles = StyleSheet.create({
     color: Colors.text,
     fontSize: 18,
     marginBottom: 15,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   buttonRow: {
     flexDirection: "row",
@@ -270,16 +289,16 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   chatRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   avatarPlaceholder: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 15,
     borderWidth: 1,
     borderColor: Colors.primary,
@@ -287,7 +306,7 @@ const styles = StyleSheet.create({
   avatarText: {
     color: Colors.primary,
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   chatInfo: {
     flex: 1,
@@ -295,8 +314,8 @@ const styles = StyleSheet.create({
   itemText: {
     color: Colors.text,
     fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 4
+    fontWeight: "bold",
+    marginBottom: 4,
   },
   lastMessage: {
     color: Colors.textDim,
@@ -304,14 +323,14 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     opacity: 0.7,
   },
   emptyText: {
     color: Colors.text,
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
   emptySubText: {
