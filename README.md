@@ -64,12 +64,12 @@ Este repositório funciona como um ambiente real de experimentação.
 - │ └── socket/
 - └── index.js
 
-/app
-├── components/
-├── screens/
-├── hooks/
-├── UserContext.js
-└── app/
+- /app
+- ├── components/
+- ├── screens/
+- ├── hooks/
+- ├── UserContext.js
+- └── app/
 
 
 ---
